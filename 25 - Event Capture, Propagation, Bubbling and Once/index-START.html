@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Understanding JavaScript's Capture</title>
+</head>
+<body class="bod">
+
+  <div class="one">
+    <div class="two">
+      <div class="three">
+      </div>
+    </div>
+  </div>
+
+<style>
+  html {
+    box-sizing: border-box;
+  }
+  *, *:before, *:after { box-sizing: inherit; }
+
+  div {
+    width:100%;
+    padding:100px;
+  }
+
+  .one {
+    background: thistle;
+  }
+
+  .two {
+    background:mistyrose;
+  }
+
+  .three {
+    background:coral;
+  }
+</style>
+
+<button></button>
+<script>
+  const divs = document.querySelectorAll('div');
+
+  function logTest(e){
+    console.log(this.classList.value);
+    e.stopPropagation(); //stop bubbling or capturing
+  }
+  divs.forEach(div => div.addEventListener('click',logTest));
+  //Since divs are nested, each div will fire their click event. Will fire event in order of "bubble". Meaning from deepest child and up
+  
+  //divs.forEach(div => div.addEventListener('click',logTest, {capture:true}));
+  //. Will fire event in order of "capture". Meaning from top level down
+  
+  divs.forEach(div => div.addEventListener('click',logTest, {capture:false, once:true}));
+  //once unbinds the event (can only fire once)
+</script>
+</body>
+</html>

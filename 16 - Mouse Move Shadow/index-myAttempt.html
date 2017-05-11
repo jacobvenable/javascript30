@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mouse Shadow</title>
+</head>
+<body>
+  <div class="hero">
+    <h1 contenteditable>🔥WOAH!</h1>
+  </div>
+
+  <style>
+  html {
+    color:black;
+    font-family: sans-serif;
+  }
+
+  body {
+    margin: 0;
+  }
+
+  .hero {
+    min-height: 100vh;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    color:black;
+  }
+
+  h1 {
+    text-shadow: 10px 10px 0 rgba(0,0,0,1);
+    font-size: 100px;
+  }
+  </style>
+
+<script>
+  const shadowRange = 10;
+  const box = document.querySelector('.displayBox');
+  const text = document.querySelector('h1');
+  window.addEventListener('mousemove',updateShadow);
+    console.dir(text);
+
+  function updateShadow(e)
+  {
+    a = text.clientWidth/2 + shadowRange;
+    b = text.clientHeight/2 + shadowRange;
+    relativeX = e.clientX - (text.offsetLeft - shadowRange + a);
+    relativeY = e.clientY - (text.offsetTop - shadowRange + b);
+    angle = Math.atan(relativeY*-1/relativeX);
+    shadowLimitX = 
+      (a * b)/
+      Math.sqrt(
+        Math.pow(b,2)+
+        (Math.pow(a,2)*Math.pow(Math.tan(angle),2))
+      );
+    shadowLimitY = 
+      (a * b)/
+      Math.sqrt(
+        Math.pow(a,2)+
+        (Math.pow(b,2)/Math.pow(Math.tan(angle),2))
+      );
+    console.log(shadowLimitX,relativeX*(shadowRange/(text.clientWidth/2)));
+    shadowX = relativeX > 0 ? Math.min(relativeX*(shadowRange/(text.clientWidth/2)),shadowLimitX) : Math.max(relativeX*(shadowRange/a),shadowLimitX*-1);
+    shadowY = relativeY > 0 ? Math.min(relativeY*(shadowRange/(text.clientHeight/2)),shadowLimitY) : Math.max(relativeY*(shadowRange/b),shadowLimitY*-1);
+    text.style.textShadow = `${shadowX}px ${shadowY}px 0 rgba(0,0,0,0.5)`;
+  }
+</script>
+</body>
+</html>

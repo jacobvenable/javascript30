@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Video Speed Scrubber</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="wrapper">
+    <video class="flex" width="765" height="430" src="https://www.dropbox.com/s/nf6jfkwck1glsyo/12%20-%20flex-wrapping-and-columns.mp4?dl=1" loop controls></video>
+    <div class="speed">
+      <div class="speed-bar">1×</div>
+    </div>
+  </div>
+
+<script>
+	const speed = document.querySelector('.speed');
+	const speedBar = document.querySelector('.speed-bar');
+	const video = document.querySelector('.flex');
+	let down = false;
+	speed.addEventListener('mousedown',mouseDown);
+	speed.addEventListener('mouseup',mouseUp);
+	speed.addEventListener('mouseleave',mouseUp);
+	speed.addEventListener('mousemove',(e) => updateSpeed(e));
+	speed.addEventListener('click',(e) =>
+	{
+		mouseDown();
+		updateSpeed(e);
+		mouseUp();
+	});
+
+	function mouseDown(){
+		down = true;
+	}
+
+	function mouseUp(){
+		down = false;
+	}
+	
+	function updateSpeed(e){
+		if(!down) return;
+		const walk = e.pageY - speed.offsetTop;
+		const percent = Math.min((speed.clientHeight - walk)/speed.clientHeight*100,90);
+		playback = 4-(4*(percent/100));
+		speedBar.innerText = `${Math.round10(playback,-2)}x`;
+		speedBar.style.height = `${100 - percent}%`;
+		video.playbackRate = playback;
+	}
+
+	if (!Math.round10) {
+		Math.round10 = function(value, exp) {
+		return decimalAdjust('round', value, exp);
+		};
+	}
+
+	/*
+	decimalAdjust retrieved from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round.
+	 */
+	function decimalAdjust(type, value, exp) {
+		// If the exp is undefined or zero...
+		if (typeof exp === 'undefined' || +exp === 0) {
+		return Math[type](value);
+		}
+		value = +value;
+		exp = +exp;
+		// If the value is not a number or the exp is not an integer...
+		if (isNaN(value) || !(typeof exp === 'number' && exp % 1 === 0)) {
+		return NaN;
+		}
+		// If the value is negative...
+		if (value < 0) {
+		return -decimalAdjust(type, -value, exp);
+		}
+		// Shift
+		value = value.toString().split('e');
+		value = Math[type](+(value[0] + 'e' + (value[1] ? (+value[1] - exp) : -exp)));
+		// Shift back
+		value = value.toString().split('e');
+		return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
+	}
+</script>
+</body>
+</html>
